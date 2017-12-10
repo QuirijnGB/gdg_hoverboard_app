@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 void main() {
   runApp(new MyApp());
@@ -27,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final reference = FirebaseDatabase.instance.reference().child('sessions');
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +37,54 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: new Column(
+        children: <Widget>[
+          new Flexible(
+            child: new FirebaseAnimatedList(
+              query: reference,
+              sort: (a, b) => b.key.compareTo(a.key),
+              padding: new EdgeInsets.all(8.0),
+              reverse: true,
+              itemBuilder:
+                  (_, DataSnapshot snapshot, Animation<double> animation) {
+                return new SessionItem(
+                    snapshot: snapshot, animation: animation);
+              },
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: new BottomNavigationBar(items: [
+        new BottomNavigationBarItem(icon: new Icon(Icons.schedule), title: new Text("Schedule")),
+        new BottomNavigationBarItem(icon: new Icon(Icons.people), title: new Text("Speakers")),
+      ]),
+    );
+  }
+}
+
+class SessionItem extends StatelessWidget {
+  SessionItem({this.snapshot, this.animation});
+
+  final DataSnapshot snapshot;
+  final Animation animation;
+
+  Widget build(BuildContext context) {
+    return new SizeTransition(
+      sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
+      axisAlignment: 0.0,
+      child: new Container(
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            new Text(
-              'You have pushed the button this many times:',
+            new Expanded(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(snapshot.value['title'],
+                      style: Theme.of(context).textTheme.subhead),
+                ],
+              ),
             ),
           ],
         ),

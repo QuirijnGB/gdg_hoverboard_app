@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "519214668453",
+    "firebase_url": "https://hoverboard-demo.firebaseio.com",
+    "project_id": "hoverboard-demo"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519214668453:android:d49a2da736fdf028",
+        "android_client_info": {
+          "package_name": "com.yourcompany.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519214668453-k982eu5ilmn9l01eg4qmpba439s5kjeb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-wsVk8U2cLPaIJLnJdazgq2uGG0WPAUA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
