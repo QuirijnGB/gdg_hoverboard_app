@@ -23,7 +23,6 @@ class _SchedulePageState extends State<SchedulePage> {
             query: reference,
             sort: (a, b) => b.key.compareTo(a.key),
             padding: new EdgeInsets.all(8.0),
-            reverse: true,
             itemBuilder:
                 (_, DataSnapshot snapshot, Animation<double> animation) {
               return new SessionItem(snapshot: snapshot, animation: animation);

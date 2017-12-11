@@ -19,7 +19,6 @@ class _SpeakersPagePageState extends State<SpeakersPage> {
             query: reference,
             sort: (a, b) => b.key.compareTo(a.key),
             padding: new EdgeInsets.all(8.0),
-            reverse: false,
             itemBuilder:
                 (_, DataSnapshot snapshot, Animation<double> animation) {
               return new SpeakerItem(snapshot: snapshot, animation: animation);
