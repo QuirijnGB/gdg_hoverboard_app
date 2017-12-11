@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
-
-
+import 'package:flutter/material.dart';
 
 class SchedulePage extends StatefulWidget {
   SchedulePage({Key key, this.title}) : super(key: key);
@@ -18,26 +16,24 @@ class _SchedulePageState extends State<SchedulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return  new Column(
-        children: <Widget>[
-          new Flexible(
-            child: new FirebaseAnimatedList(
-              query: reference,
-              sort: (a, b) => b.key.compareTo(a.key),
-              padding: new EdgeInsets.all(8.0),
-              reverse: true,
-              itemBuilder:
-                  (_, DataSnapshot snapshot, Animation<double> animation) {
-                return new SessionItem(
-                    snapshot: snapshot, animation: animation);
-              },
-            ),
+    return new Column(
+      children: <Widget>[
+        new Flexible(
+          child: new FirebaseAnimatedList(
+            query: reference,
+            sort: (a, b) => b.key.compareTo(a.key),
+            padding: new EdgeInsets.all(8.0),
+            reverse: true,
+            itemBuilder:
+                (_, DataSnapshot snapshot, Animation<double> animation) {
+              return new SessionItem(snapshot: snapshot, animation: animation);
+            },
           ),
-        ],
+        ),
+      ],
     );
   }
 }
-
 
 class SessionItem extends StatelessWidget {
   SessionItem({this.snapshot, this.animation});
@@ -71,7 +67,8 @@ class SessionItem extends StatelessWidget {
 }
 
 class Choice {
-  const Choice({ this.title, this.icon });
+  const Choice({this.title, this.icon});
+
   final String title;
   final IconData icon;
 }
@@ -85,9 +82,8 @@ const List<Choice> choices = const <Choice>[
   const Choice(title: 'WALK', icon: Icons.directions_walk),
 ];
 
-
 class ChoiceCard extends StatelessWidget {
-  const ChoiceCard({ Key key, this.choice }) : super(key: key);
+  const ChoiceCard({Key key, this.choice}) : super(key: key);
 
   final Choice choice;
 
