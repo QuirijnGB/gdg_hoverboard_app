@@ -42,23 +42,18 @@ class SpeakerItem extends StatelessWidget {
     return new SizeTransition(
       sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
       axisAlignment: 0.0,
-      child: new Container(
-        margin: const EdgeInsets.symmetric(vertical: 10.0),
-        child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: new Card(
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            new Expanded(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text(snapshot.value['name'],
-                      style: Theme.of(context).textTheme.subhead),
-                ],
-              ),
+            new Image.network("https://hoverboard-demo.firebaseapp.com" + snapshot.value['photoUrl']),
+            new ListTile(
+              title: new Text(snapshot.value['name']),
+              subtitle: new Text(snapshot.value['country']),
             ),
           ],
         ),
-      ),
+      )
     );
   }
 }
