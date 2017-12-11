@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../schedule/schedule.dart';
+import '../schedule/schedule_component.dart';
 import '../speakers/speakers_component.dart';
 
 class HomeComponent extends StatefulWidget {
