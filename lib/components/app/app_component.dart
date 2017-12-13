@@ -17,12 +17,12 @@ class AppComponentState extends State<AppComponent> {
     Router router = new Router();
     Routes.configureRoutes(router);
     Application.router = router;
-    print("Configured channel receiver in flutter ..");
   }
 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+//      debugShowMaterialGrid: true,
       title: 'Flutter Demo',
       theme: new ThemeData(
         primarySwatch: Colors.blue,

@@ -18,10 +18,14 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
   void initState() {
     _id = widget.id;
 
-    FirebaseDatabase.instance.reference().child('speakers').child(_id).onValue.listen(
+    FirebaseDatabase.instance
+        .reference()
+        .child('speakers')
+        .child(_id)
+        .onValue
+        .listen(
       (event) {
         snapshot = event.snapshot;
-        print(snapshot);
         name = snapshot.value['name'];
       },
     );
@@ -29,13 +33,31 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      children: <Widget>[
-        new Text(
-          name,
-          style: new TextStyle(color: Colors.black, fontSize: 20.0),
-        ),
-      ],
+    return new Container(
+      color: Colors.white,
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Image.network("https://hoverboard-demo.firebaseapp.com" +
+              snapshot.value['photoUrl']),
+          new Container(
+            padding: new EdgeInsets.all(16.0),
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text(snapshot.value['name'],
+                    style: Theme.of(context).textTheme.headline),
+                new Text(snapshot.value['company'],
+                    style: Theme.of(context).textTheme.subhead),
+                new Text(snapshot.value['country'],
+                    style: Theme.of(context).textTheme.subhead),
+                new Text(snapshot.value['bio'],
+                    style: Theme.of(context).textTheme.body1),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
