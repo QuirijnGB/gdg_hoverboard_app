@@ -8,5 +8,5 @@ var demoRouteHandler = new Handler(
 });
 
 var speakerHandler = new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-  return new SpeakerPage();
+  return new SpeakerPage(id: params['id']);
 });

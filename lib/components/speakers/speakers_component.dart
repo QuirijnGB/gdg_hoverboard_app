@@ -44,7 +44,7 @@ class SpeakerItem extends StatelessWidget {
 
   GestureTapCallback _getHandler() {
     return () {
-      Application.router.navigateTo(context, "/speakers/1234");
+      Application.router.navigateTo(context, "/speakers/" + snapshot.key);
     };
   }
 
