@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import '../../config/application.dart';
 
 class SpeakersPage extends StatefulWidget {
   @override
@@ -21,7 +22,11 @@ class _SpeakersPagePageState extends State<SpeakersPage> {
             padding: new EdgeInsets.all(8.0),
             itemBuilder:
                 (_, DataSnapshot snapshot, Animation<double> animation) {
-              return new SpeakerItem(snapshot: snapshot, animation: animation);
+              return new SpeakerItem(
+                snapshot: snapshot,
+                animation: animation,
+                context: context,
+              );
             },
           ),
         ),
@@ -31,16 +36,24 @@ class _SpeakersPagePageState extends State<SpeakersPage> {
 }
 
 class SpeakerItem extends StatelessWidget {
-  SpeakerItem({this.snapshot, this.animation});
+  SpeakerItem({this.snapshot, this.animation, this.context});
 
   final DataSnapshot snapshot;
   final Animation animation;
+  final BuildContext context;
+
+  GestureTapCallback _getHandler() {
+    return () {
+      Application.router.navigateTo(context, "/speakers/1234");
+    };
+  }
 
   Widget build(BuildContext context) {
     return new SizeTransition(
-        sizeFactor:
-            new CurvedAnimation(parent: animation, curve: Curves.easeOut),
-        axisAlignment: 0.0,
+      sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
+      axisAlignment: 0.0,
+      child: new InkWell(
+        onTap: _getHandler(),
         child: new Card(
           child: new Column(
             mainAxisSize: MainAxisSize.min,
@@ -54,7 +67,9 @@ class SpeakerItem extends StatelessWidget {
               new SpeakerSkillsItem(snapshot.value['tags']),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
