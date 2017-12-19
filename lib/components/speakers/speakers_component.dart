@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import '../../config/application.dart';
 
@@ -44,7 +45,8 @@ class SpeakerItem extends StatelessWidget {
 
   GestureTapCallback _getHandler() {
     return () {
-      Application.router.navigateTo(context, "/speakers/" + snapshot.key);
+      Application.router.navigateTo(context, "/speakers/" + snapshot.key,
+          transition: TransitionType.fadeIn);
     };
   }
 
