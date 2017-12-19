@@ -13,6 +13,10 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
   String _id;
   DataSnapshot snapshot;
   String name = "";
+  String company = "";
+  String photoUrl;
+  String country = "";
+  String bio = "";
 
   @override
   void initState() {
@@ -26,37 +30,56 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
         .listen(
       (event) {
         snapshot = event.snapshot;
-        name = snapshot.value['name'];
+        if (snapshot.value != null) {
+          setState(() {
+            name = snapshot.value['name'];
+            photoUrl = "https://hoverboard-demo.firebaseapp.com" +
+                snapshot.value['photoUrl'];
+            company = snapshot.value['company'];
+            country = snapshot.value['country'];
+            bio = snapshot.value['bio'];
+            print(photoUrl);
+          });
+        }
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      color: Colors.white,
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new Image.network("https://hoverboard-demo.firebaseapp.com" +
-              snapshot.value['photoUrl']),
-          new Container(
-            padding: new EdgeInsets.all(16.0),
-            child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Text(snapshot.value['name'],
-                    style: Theme.of(context).textTheme.headline),
-                new Text(snapshot.value['company'],
-                    style: Theme.of(context).textTheme.subhead),
-                new Text(snapshot.value['country'],
-                    style: Theme.of(context).textTheme.subhead),
-                new Text(snapshot.value['bio'],
-                    style: Theme.of(context).textTheme.body1),
-              ],
+    return new SingleChildScrollView(
+      child: new Container(
+        color: Colors.white,
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(
+              constraints: new BoxConstraints(
+                minWidth: double.INFINITY,
+              ),
+              child: new Hero(
+                tag: 'hero-' + name,
+                child: new Image.network(
+                  photoUrl,
+                  fit: BoxFit.fill,
+                  alignment: Alignment.center,
+                ),
+              ),
             ),
-          )
-        ],
+            new Container(
+              padding: new EdgeInsets.all(16.0),
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(name, style: Theme.of(context).textTheme.headline),
+                  new Text(company, style: Theme.of(context).textTheme.subhead),
+                  new Text(country, style: Theme.of(context).textTheme.subhead),
+                  new Text(bio, style: Theme.of(context).textTheme.body1),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

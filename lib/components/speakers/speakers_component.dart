@@ -58,8 +58,20 @@ class SpeakerItem extends StatelessWidget {
           child: new Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              new Image.network("https://hoverboard-demo.firebaseapp.com" +
-                  snapshot.value['photoUrl']),
+              new Container(
+                constraints: new BoxConstraints(
+                  minWidth: double.INFINITY,
+                ),
+                child: new Hero(
+                  tag: 'hero-'+snapshot.value['name'],
+                  child: new Image.network(
+                    "https://hoverboard-demo.firebaseapp.com" +
+                        snapshot.value['photoUrl'],
+                    fit: BoxFit.fill,
+                    alignment: Alignment.center,
+                  ),
+                ),
+              ),
               new ListTile(
                 title: new Text(snapshot.value['name']),
                 subtitle: new Text(snapshot.value['country']),
