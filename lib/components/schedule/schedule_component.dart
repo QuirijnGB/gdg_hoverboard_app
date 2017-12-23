@@ -11,22 +11,57 @@ class SchedulePage extends StatefulWidget {
   _SchedulePageState createState() => new _SchedulePageState();
 }
 
-class _SchedulePageState extends State<SchedulePage> {
+class _SchedulePageState extends State<SchedulePage>
+    with SingleTickerProviderStateMixin {
   final reference = FirebaseDatabase.instance.reference().child('sessions');
+  final scheduleReference =
+      FirebaseDatabase.instance.reference().child('schedule');
+
+  List<Tab> myTabs = <Tab>[new Tab(text: "")];
+  TabController _tabController;
+  List _days;
+
+  @override
+  void initState() {
+    scheduleReference.onValue.listen((event) {
+      _tabController = new TabController(vsync: this, length: myTabs.length);
+      _days = event.snapshot.value;
+      setState(() {
+        myTabs = _days.map((day) {
+          String date = day['dateReadable'];
+          print("Create tab $date");
+          return new Tab(
+              child: new Semantics(
+            child: new Text(date),
+            value: day['key'],
+          ));
+        }).toList();
+        _tabController = new TabController(vsync: this, length: myTabs.length);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Column(
       children: <Widget>[
-        new Flexible(
-          child: new FirebaseAnimatedList(
-            query: reference,
-            sort: (a, b) => b.key.compareTo(a.key),
-            padding: new EdgeInsets.all(8.0),
-            itemBuilder:
-                (_, DataSnapshot snapshot, Animation<double> animation) {
-              return new SessionItem(snapshot: snapshot, animation: animation);
-            },
+        new Container(
+          color: Colors.blue,
+          child: new TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            indicatorColor: Colors.white,
+            tabs: myTabs,
+          ),
+        ),
+        new Container(
+          height: 200.0,
+          child: new TabBarView(
+            controller: _tabController,
+            children: myTabs.map((Tab tab) {
+              var day = _days[_tabController.index]['dateReadable'];
+              return new Text(day, style: Theme.of(context).textTheme.body1);
+            }).toList(),
           ),
         ),
       ],
@@ -34,6 +69,17 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 }
 
+//        new Flexible(
+//          child: new FirebaseAnimatedList(
+//            query: reference,
+//            sort: (a, b) => b.key.compareTo(a.key),
+//            padding: new EdgeInsets.all(8.0),
+//            itemBuilder:
+//                (_, DataSnapshot snapshot, Animation<double> animation) {
+//              return new SessionItem(snapshot: snapshot, animation: animation);
+//            },
+//          ),
+//        ),
 class SessionItem extends StatelessWidget {
   SessionItem({this.snapshot, this.animation});
 
@@ -58,46 +104,6 @@ class SessionItem extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Choice {
-  const Choice({this.title, this.icon});
-
-  final String title;
-  final IconData icon;
-}
-
-const List<Choice> choices = const <Choice>[
-  const Choice(title: 'CAR', icon: Icons.directions_car),
-  const Choice(title: 'BICYCLE', icon: Icons.directions_bike),
-  const Choice(title: 'BOAT', icon: Icons.directions_boat),
-  const Choice(title: 'BUS', icon: Icons.directions_bus),
-  const Choice(title: 'TRAIN', icon: Icons.directions_railway),
-  const Choice(title: 'WALK', icon: Icons.directions_walk),
-];
-
-class ChoiceCard extends StatelessWidget {
-  const ChoiceCard({Key key, this.choice}) : super(key: key);
-
-  final Choice choice;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextStyle textStyle = Theme.of(context).textTheme.display1;
-    return new Card(
-      color: Colors.white,
-      child: new Center(
-        child: new Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            new Icon(choice.icon, size: 128.0, color: textStyle.color),
-            new Text(choice.title, style: textStyle),
           ],
         ),
       ),
