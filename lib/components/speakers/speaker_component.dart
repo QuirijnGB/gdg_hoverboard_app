@@ -20,6 +20,7 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
 
   @override
   void initState() {
+    super.initState();
     _id = widget.id;
 
     FirebaseDatabase.instance

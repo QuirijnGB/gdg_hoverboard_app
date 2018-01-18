@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -23,6 +22,7 @@ class _SchedulePageState extends State<SchedulePage>
 
   @override
   void initState() {
+    super.initState();
     scheduleReference.onValue.listen((event) {
       _tabController = new TabController(vsync: this, length: myTabs.length);
       _days = event.snapshot.value;
@@ -31,10 +31,11 @@ class _SchedulePageState extends State<SchedulePage>
           String date = day['dateReadable'];
           print("Create tab $date");
           return new Tab(
-              child: new Semantics(
-            child: new Text(date),
-            value: day['key'],
-          ));
+            child: new Semantics(
+              child: new Text(date),
+              value: day['key'],
+            ),
+          );
         }).toList();
         _tabController = new TabController(vsync: this, length: myTabs.length);
       });
