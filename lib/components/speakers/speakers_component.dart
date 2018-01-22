@@ -14,24 +14,29 @@ class _SpeakersPagePageState extends State<SpeakersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      children: <Widget>[
-        new Flexible(
-          child: new FirebaseAnimatedList(
-            query: reference,
-            sort: (a, b) => b.key.compareTo(a.key),
-            padding: new EdgeInsets.all(8.0),
-            itemBuilder:
-                (_, DataSnapshot snapshot, Animation<double> animation) {
-              return new SpeakerItem(
-                snapshot: snapshot,
-                animation: animation,
-                context: context,
-              );
-            },
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('GDG DevFest'),
+      ),
+      body: new Column(
+        children: <Widget>[
+          new Flexible(
+            child: new FirebaseAnimatedList(
+              query: reference,
+              sort: (a, b) => b.key.compareTo(a.key),
+              padding: new EdgeInsets.all(8.0),
+              itemBuilder:
+                  (_, DataSnapshot snapshot, Animation<double> animation) {
+                return new SpeakerItem(
+                  snapshot: snapshot,
+                  animation: animation,
+                  context: context,
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -65,7 +70,7 @@ class SpeakerItem extends StatelessWidget {
                   minWidth: double.INFINITY,
                 ),
                 child: new Hero(
-                  tag: 'hero-'+snapshot.value['name'],
+                  tag: 'hero-' + snapshot.value['name'],
                   child: new Image.network(
                     "https://hoverboard-demo.firebaseapp.com" +
                         snapshot.value['photoUrl'],

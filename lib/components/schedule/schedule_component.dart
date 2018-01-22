@@ -32,7 +32,9 @@ class _SchedulePageState extends State<SchedulePage>
           print("Create tab $date");
           return new Tab(
             child: new Semantics(
-              child: new Text(date),
+              child: new Text(
+                date.toUpperCase(),
+              ),
               value: day['key'],
             ),
           );
@@ -42,45 +44,146 @@ class _SchedulePageState extends State<SchedulePage>
     });
   }
 
+  List<Widget> createPages() {
+    List pages = [];
+    myTabs.forEach((Tab tab) {
+      var scheduleDay = new ScheduleDay(_days[myTabs.indexOf(tab)]);
+      print("create page $scheduleDay");
+      pages.add(new DayScheduleWidget(scheduleDay));
+    });
+    return pages;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      children: <Widget>[
-        new Container(
-          color: Colors.blue,
-          child: new TabBar(
+    return new DefaultTabController(
+      length: 2,
+      child: new Scaffold(
+        appBar: new AppBar(
+          title: new Text('GDG DevFest'),
+          automaticallyImplyLeading: false,
+          bottom: new TabBar(
             controller: _tabController,
             labelColor: Colors.white,
             indicatorColor: Colors.white,
             tabs: myTabs,
           ),
         ),
-        new Container(
-          height: 200.0,
-          child: new TabBarView(
-            controller: _tabController,
-            children: myTabs.map((Tab tab) {
-              var day = _days[_tabController.index]['dateReadable'];
-              return new Text(day, style: Theme.of(context).textTheme.body1);
-            }).toList(),
-          ),
+        body: new TabBarView(
+          controller: _tabController,
+          children: createPages(),
         ),
-      ],
+      ),
     );
   }
 }
 
-//        new Flexible(
-//          child: new FirebaseAnimatedList(
-//            query: reference,
-//            sort: (a, b) => b.key.compareTo(a.key),
-//            padding: new EdgeInsets.all(8.0),
-//            itemBuilder:
-//                (_, DataSnapshot snapshot, Animation<double> animation) {
-//              return new SessionItem(snapshot: snapshot, animation: animation);
-//            },
-//          ),
-//        ),
+class ScheduleDay {
+  String dateReadable;
+  String date;
+  List<TimeSlot> timeSlots;
+  List<Track> tracks;
+
+  ScheduleDay(Map map) {
+    dateReadable = map["dateReadable"];
+    date = map["date"];
+
+    timeSlots = TimeSlot.mapTimeSlots(map["timeslots"]);
+    tracks = Track.mapTracks(map["tracks"]);
+  }
+
+  @override
+  String toString() {
+    return 'ScheduleDay{dateReadable: $dateReadable, date: $date, timeSlots: $timeSlots, tracks: $tracks}';
+  }
+}
+
+class TimeSlot {
+  String startTime;
+  String endTime;
+
+  TimeSlot(Map map) {
+    startTime = map["startTime"];
+    endTime = map["endTime"];
+  }
+
+  @override
+  String toString() {
+    return 'TimeSlot{startTime: $startTime, endTime: $endTime}';
+  }
+
+  static List<TimeSlot> mapTimeSlots(List map) {
+    List<TimeSlot> timeslots = [];
+    if (map != null) {
+      map.forEach((v) {
+        timeslots.add(new TimeSlot(v));
+      });
+    }
+    return timeslots;
+  }
+}
+
+class Track {
+  String title;
+
+  Track(Map map) {
+    title = map["title"];
+  }
+
+  static List<Track> mapTracks(List map) {
+    List<Track> tracks = [];
+    if (map != null) {
+      map.forEach((v) {
+        tracks.add(new Track(v));
+      });
+    }
+    return tracks;
+  }
+
+  @override
+  String toString() {
+    return 'Track{title: $title}';
+  }
+}
+
+class DayScheduleWidget extends StatelessWidget {
+  final ScheduleDay schedule;
+
+  DayScheduleWidget(this.schedule);
+
+  Widget build(BuildContext context) {
+    return new Container(
+      child: new ListView.builder(
+        itemCount: schedule.timeSlots.length,
+        itemBuilder: (BuildContext context, int index) {
+          return new TimeSlotWidget(schedule.timeSlots[index]);
+        },
+      ),
+    );
+  }
+}
+
+class TimeSlotWidget extends StatelessWidget {
+  final TimeSlot timeSlot;
+
+  TimeSlotWidget(this.timeSlot);
+
+  Widget build(BuildContext context) {
+    return new Container(
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Text(timeSlot.startTime,
+              style: Theme.of(context).textTheme.title),
+          new Card(
+            child: new Text("Here comes the session"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class SessionItem extends StatelessWidget {
   SessionItem({this.snapshot, this.animation});
 

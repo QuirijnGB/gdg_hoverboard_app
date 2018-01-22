@@ -15,9 +15,6 @@ class _MyHomePageState extends State<HomeComponent> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("GDG DevFest"),
-      ),
       body: new Stack(
         children: <Widget>[
           new Offstage(
