@@ -10,26 +10,49 @@ class SchedulePage extends StatefulWidget {
   _SchedulePageState createState() => new _SchedulePageState();
 }
 
+class MyInheritedWidget extends InheritedWidget {
+  final Map sessions;
+  final String derp;
+
+  const MyInheritedWidget({Key key, this.sessions, this.derp, child})
+      : super(key: key, child: child);
+
+  static MyInheritedWidget of(BuildContext context) {
+    return context.inheritFromWidgetOfExactType(MyInheritedWidget);
+  }
+
+  @override
+  bool updateShouldNotify(MyInheritedWidget old) {
+    return sessions != old.sessions || derp != old.derp;
+  }
+}
+
 class _SchedulePageState extends State<SchedulePage>
     with SingleTickerProviderStateMixin {
   final reference = FirebaseDatabase.instance.reference().child('sessions');
   final scheduleReference =
       FirebaseDatabase.instance.reference().child('schedule');
 
-  List<Tab> myTabs = <Tab>[new Tab(text: "")];
-  TabController _tabController;
+  List<Tab> myTabs = <Tab>[const Tab(text: "")];
   List _days;
+  Map _sessions;
+  String derp;
 
   @override
   void initState() {
     super.initState();
+
+    loadSessions();
+
+    loadSchedule();
+  }
+
+  void loadSchedule() {
     scheduleReference.onValue.listen((event) {
-      _tabController = new TabController(vsync: this, length: myTabs.length);
       _days = event.snapshot.value;
       setState(() {
         myTabs = _days.map((day) {
           String date = day['dateReadable'];
-          print("Create tab $date");
           return new Tab(
             child: new Semantics(
               child: new Text(
@@ -39,7 +62,16 @@ class _SchedulePageState extends State<SchedulePage>
             ),
           );
         }).toList();
-        _tabController = new TabController(vsync: this, length: myTabs.length);
+      });
+    });
+  }
+
+  void loadSessions() {
+    reference.onValue.listen((event) {
+      setState(() {
+        this._sessions = event.snapshot.value;
+        this.derp = "hah";
+        print(_sessions);
       });
     });
   }
@@ -63,15 +95,17 @@ class _SchedulePageState extends State<SchedulePage>
           title: new Text('GDG DevFest'),
           automaticallyImplyLeading: false,
           bottom: new TabBar(
-            controller: _tabController,
             labelColor: Colors.white,
             indicatorColor: Colors.white,
             tabs: myTabs,
           ),
         ),
-        body: new TabBarView(
-          controller: _tabController,
-          children: createPages(),
+        body: new MyInheritedWidget(
+          sessions: _sessions,
+          derp: derp,
+          child: new TabBarView(
+            children: createPages(),
+          ),
         ),
       ),
     );
@@ -101,10 +135,12 @@ class ScheduleDay {
 class TimeSlot {
   String startTime;
   String endTime;
+  List sessionIds = [];
 
   TimeSlot(Map map) {
     startTime = map["startTime"];
     endTime = map["endTime"];
+    sessionIds = map["sessions"];
   }
 
   @override
@@ -146,6 +182,33 @@ class Track {
   }
 }
 
+class Session {
+  String title, description, complexity;
+  int id;
+
+  Session(Map map) {
+    title = map["title"];
+    description = map["description"];
+    complexity = map["complexity"];
+    id = map["id"];
+  }
+
+  static List<Session> mapSessions(Map map) {
+    List<Session> sessions = [];
+    if (map != null) {
+      map.forEach((k, v) {
+        sessions.add(new Session(v));
+      });
+    }
+    return sessions;
+  }
+
+  @override
+  String toString() {
+    return 'Session{title: $title, description: $description, complexity: $complexity, id: $id}';
+  }
+}
+
 class DayScheduleWidget extends StatelessWidget {
   final ScheduleDay schedule;
 
@@ -166,50 +229,74 @@ class DayScheduleWidget extends StatelessWidget {
 class TimeSlotWidget extends StatelessWidget {
   final TimeSlot timeSlot;
 
-  TimeSlotWidget(this.timeSlot);
+  const TimeSlotWidget(this.timeSlot);
 
   Widget build(BuildContext context) {
+    final myInheritedWidget = MyInheritedWidget.of(context);
+    List<Session> sessions = [];
+    List<Session> mapTracks = Session.mapSessions(myInheritedWidget.sessions);
+    timeSlot.sessionIds.forEach((id) {
+      mapTracks.forEach((e) {
+        id.forEach((i) {
+          if (e.id == i) {
+            sessions.add(e);
+          }
+        });
+      });
+    });
     return new Container(
+      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Text(timeSlot.startTime,
-              style: Theme.of(context).textTheme.title),
+          new Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: new Text(timeSlot.startTime,
+                style: Theme.of(context).textTheme.title),
+          ),
           new Card(
-            child: new Text("Here comes the session"),
+            child: _createSessions(sessions),
           ),
         ],
       ),
     );
   }
+
+  Widget _createSessions(List<Session> sessions) {
+    print(sessions);
+    List sessionWidgets = [];
+    sessions
+        .forEach((sessionId) => sessionWidgets.add(new SessionItem(sessionId)));
+
+    return new Column(
+      children: sessionWidgets,
+    );
+  }
 }
 
 class SessionItem extends StatelessWidget {
-  SessionItem({this.snapshot, this.animation});
+  final Session session;
 
-  final DataSnapshot snapshot;
-  final Animation animation;
+  const SessionItem(this.session);
 
   Widget build(BuildContext context) {
-    return new SizeTransition(
-      sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
-      axisAlignment: 0.0,
-      child: new Container(
-        margin: const EdgeInsets.symmetric(vertical: 10.0),
-        child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Expanded(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text(snapshot.value['title'],
-                      style: Theme.of(context).textTheme.subhead),
-                ],
-              ),
+    return new Container(
+      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Expanded(
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text(session.title,
+                    style: Theme.of(context).textTheme.subhead),
+                new Text(session.complexity == null ? "" : session.complexity,
+                    style: Theme.of(context).textTheme.body1),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
