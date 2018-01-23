@@ -472,7 +472,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quirijngb.devfest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -494,7 +494,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quirijngb.devfest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

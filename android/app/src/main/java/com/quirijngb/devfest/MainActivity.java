@@ -1,4 +1,4 @@
-package com.yourcompany.app;
+package com.quirijngb.devfest;
 
 import android.os.Bundle;
 
