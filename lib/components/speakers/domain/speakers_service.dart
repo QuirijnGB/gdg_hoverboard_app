@@ -6,7 +6,7 @@ abstract class SpeakersService {
   Future<List<Speaker>> fetchSpeakers();
 }
 
-class FirebaseSpeakersService extends SpeakersService {
+class FirebaseSpeakersService implements SpeakersService {
   final speakersRef = FirebaseDatabase.instance.reference().child('speakers');
 
   @override
