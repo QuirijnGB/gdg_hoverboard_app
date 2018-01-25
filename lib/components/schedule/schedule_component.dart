@@ -2,9 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class SchedulePage extends StatefulWidget {
-  SchedulePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  SchedulePage({Key key}) : super(key: key);
 
   @override
   _SchedulePageState createState() => new _SchedulePageState();
@@ -12,9 +10,8 @@ class SchedulePage extends StatefulWidget {
 
 class MyInheritedWidget extends InheritedWidget {
   final Map sessions;
-  final String derp;
 
-  const MyInheritedWidget({Key key, this.sessions, this.derp, child})
+  const MyInheritedWidget({Key key, this.sessions, child})
       : super(key: key, child: child);
 
   static MyInheritedWidget of(BuildContext context) {
@@ -23,7 +20,7 @@ class MyInheritedWidget extends InheritedWidget {
 
   @override
   bool updateShouldNotify(MyInheritedWidget old) {
-    return sessions != old.sessions || derp != old.derp;
+    return sessions != old.sessions;
   }
 }
 
@@ -34,9 +31,8 @@ class _SchedulePageState extends State<SchedulePage>
       FirebaseDatabase.instance.reference().child('schedule');
 
   List<Tab> myTabs = <Tab>[const Tab(text: "")];
-  List _days;
-  Map _sessions;
-  String derp;
+  List _days = [];
+  Map _sessions = {};
 
   @override
   void initState() {
@@ -70,19 +66,19 @@ class _SchedulePageState extends State<SchedulePage>
     reference.onValue.listen((event) {
       setState(() {
         this._sessions = event.snapshot.value;
-        this.derp = "hah";
-        print(_sessions);
+//        print(_sessions);
       });
     });
   }
 
   List<Widget> createPages() {
     List pages = [];
-    myTabs.forEach((Tab tab) {
-      var scheduleDay = new ScheduleDay(_days[myTabs.indexOf(tab)]);
-      print("create page $scheduleDay");
-      pages.add(new DayScheduleWidget(scheduleDay));
-    });
+    if(_days.length > 0) {
+      myTabs.forEach((Tab tab) {
+        var scheduleDay = new ScheduleDay(_days[myTabs.indexOf(tab)]);
+        pages.add(new DayScheduleWidget(scheduleDay));
+      });
+    }
     return pages;
   }
 
@@ -102,7 +98,6 @@ class _SchedulePageState extends State<SchedulePage>
         ),
         body: new MyInheritedWidget(
           sessions: _sessions,
-          derp: derp,
           child: new TabBarView(
             children: createPages(),
           ),
@@ -263,7 +258,7 @@ class TimeSlotWidget extends StatelessWidget {
   }
 
   Widget _createSessions(List<Session> sessions) {
-    print(sessions);
+//    print(sessions);
     List sessionWidgets = [];
     sessions
         .forEach((sessionId) => sessionWidgets.add(new SessionItem(sessionId)));

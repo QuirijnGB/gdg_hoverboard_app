@@ -1,8 +1,9 @@
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+
 import '../../config/application.dart';
+import 'domain/speakers_controller.dart';
+import 'domain/speakers_service.dart';
 
 class SpeakersPage extends StatefulWidget {
   @override
@@ -10,82 +11,77 @@ class SpeakersPage extends StatefulWidget {
 }
 
 class _SpeakersPagePageState extends State<SpeakersPage> {
-  final reference = FirebaseDatabase.instance.reference().child('speakers');
+  final SpeakerController controller =
+      new SpeakerController(new FirebaseSpeakersService());
+  List<Speaker> speakers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.getSpeakers().then((speakers) {
+      print("Component - getSpeakers()");
+      setState(() {
+        this.speakers = speakers;
+        print("new speakers $speakers");
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('GDG DevFest'),
-      ),
-      body: new Column(
-        children: <Widget>[
-          new Flexible(
-            child: new FirebaseAnimatedList(
-              query: reference,
-              sort: (a, b) => b.key.compareTo(a.key),
-              padding: new EdgeInsets.all(8.0),
-              itemBuilder:
-                  (_, DataSnapshot snapshot, Animation<double> animation) {
-                return new SpeakerItem(
-                  snapshot: snapshot,
-                  animation: animation,
-                  context: context,
-                );
-              },
-            ),
+        appBar: new AppBar(
+          title: new Text('GDG DevFest'),
+        ),
+        body: new Container(
+          child: new ListView.builder(
+            itemCount: speakers.length,
+            itemBuilder: (BuildContext context, int index) {
+              return new SpeakerItem(speakers[index]);
+            },
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
 
 class SpeakerItem extends StatelessWidget {
-  SpeakerItem({this.snapshot, this.animation, this.context});
+  SpeakerItem(this.speaker);
 
-  final DataSnapshot snapshot;
-  final Animation animation;
-  final BuildContext context;
+  final Speaker speaker;
 
-  GestureTapCallback _getHandler() {
+  GestureTapCallback _goToSpeakerDetails(BuildContext context, int id) {
     return () {
-      Application.router.navigateTo(context, "/speakers/" + snapshot.key,
+      Application.router.navigateTo(context, "/speakers/$id",
           transition: TransitionType.fadeIn);
     };
   }
 
   Widget build(BuildContext context) {
-    return new SizeTransition(
-      sizeFactor: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
-      axisAlignment: 0.0,
-      child: new InkWell(
-        onTap: _getHandler(),
-        child: new Card(
-          child: new Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              new Container(
-                constraints: new BoxConstraints(
-                  minWidth: double.INFINITY,
-                ),
-                child: new Hero(
-                  tag: 'hero-' + snapshot.value['name'],
-                  child: new Image.network(
-                    "https://hoverboard-demo.firebaseapp.com" +
-                        snapshot.value['photoUrl'],
-                    fit: BoxFit.fill,
-                    alignment: Alignment.center,
-                  ),
+    return new InkWell(
+      onTap: _goToSpeakerDetails(context, speaker.id),
+      child: new Card(
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            new Container(
+              constraints: new BoxConstraints(
+                minWidth: double.INFINITY,
+              ),
+              child: new Hero(
+                tag: 'hero-' + speaker.name,
+                child: new Image.network(
+                  "https://hoverboard-demo.firebaseapp.com" + speaker.photoUrl,
+                  fit: BoxFit.fill,
+                  alignment: Alignment.center,
                 ),
               ),
-              new ListTile(
-                title: new Text(snapshot.value['name']),
-                subtitle: new Text(snapshot.value['country']),
-              ),
-              new SpeakerSkillsItem(snapshot.value['tags']),
-            ],
-          ),
+            ),
+            new ListTile(
+              title: new Text(speaker.name),
+              subtitle: new Text(speaker.country),
+            ),
+            new SpeakerSkillsItem(speaker.tags),
+          ],
         ),
       ),
     );
