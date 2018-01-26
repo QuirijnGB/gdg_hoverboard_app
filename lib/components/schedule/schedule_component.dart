@@ -150,9 +150,7 @@ class TimeSlotWidget extends StatelessWidget {
             child: new Text(timeSlot.startTime,
                 style: Theme.of(context).textTheme.title),
           ),
-          new Card(
-            child: _createSessions(sessions),
-          ),
+          _createSessions(sessions),
         ],
       ),
     );
@@ -175,23 +173,40 @@ class SessionItem extends StatelessWidget {
   const SessionItem(this.session);
 
   Widget build(BuildContext context) {
-    return new Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-      child: new Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new Expanded(
-            child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Text(session.title,
-                    style: Theme.of(context).textTheme.subhead),
-                new Text(session.complexity == null ? "" : session.complexity,
-                    style: Theme.of(context).textTheme.body1),
-              ],
+    return new Card(
+      child: new Container(
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Expanded(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  session.image.isEmpty
+                      ? new Container()
+                      : new Image.network(session.image),
+                  new Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 16.0),
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Text(session.title,
+                            style: Theme.of(context).textTheme.subhead),
+                        new Text(
+                            session.complexity == null
+                                ? ""
+                                : session.complexity,
+                            style: Theme.of(context).textTheme.body1),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

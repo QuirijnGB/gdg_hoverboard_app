@@ -1,5 +1,5 @@
 class Session {
-  String title, description, complexity;
+  String title, description, complexity, image;
   int id;
 
   Session(Map map) {
@@ -7,6 +7,9 @@ class Session {
     description = map["description"];
     complexity = map["complexity"];
     id = map["id"];
+    image = map["image"] != null
+        ? "https://hoverboard-demo.firebaseapp.com${map["image"]}"
+        : "";
   }
 
   static List<Session> mapSessions(Map map) {
