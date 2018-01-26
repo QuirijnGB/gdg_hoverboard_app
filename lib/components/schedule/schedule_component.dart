@@ -51,13 +51,12 @@ class _SchedulePageState extends State<SchedulePage>
 
       setState(() {
         myTabs = _days.map((day) {
-          String date = day.dateReadable;
           return new Tab(
             child: new Semantics(
               child: new Text(
-                date.toUpperCase(),
+                day.dateReadable.toUpperCase(),
               ),
-              value: day.key,
+              value: day.date,
             ),
           );
         }).toList();
