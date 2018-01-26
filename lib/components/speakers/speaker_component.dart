@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'domain/data/speaker.dart';
@@ -31,44 +30,47 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new SingleChildScrollView(
-      child: new Container(
-        color: Colors.white,
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Container(
-              constraints: new BoxConstraints(
-                minWidth: double.INFINITY,
-              ),
-              child: new Hero(
-                tag: 'hero-' + _speaker.name,
-                child: new Image.network(
-                  _speaker.photoUrl,
-                  fit: BoxFit.fill,
-                  alignment: Alignment.center,
-                ),
+    return new CustomScrollView(
+      slivers: [
+        new SliverAppBar(
+          flexibleSpace: new FlexibleSpaceBar(
+            background: new Hero(
+              tag: 'hero-' + _speaker.name,
+              child: new Image.network(
+                _speaker.photoUrl,
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.center,
               ),
             ),
-            new Container(
-              padding: new EdgeInsets.all(16.0),
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text(_speaker.name,
-                      style: Theme.of(context).textTheme.headline),
-                  new Text(_speaker.company,
-                      style: Theme.of(context).textTheme.subhead),
-                  new Text(_speaker.country,
-                      style: Theme.of(context).textTheme.subhead),
-                  new Text(_speaker.bio,
-                      style: Theme.of(context).textTheme.body1),
-                ],
-              ),
-            )
-          ],
+          ),
+          pinned: true,
+          // Extruding edge from the sliver appbar, may need to fix expanded height
+          expandedHeight: MediaQuery.of(context).size.height / 2.5,
         ),
-      ),
+        new SliverFillRemaining(
+          child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Container(
+                padding: new EdgeInsets.all(16.0),
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text(_speaker.name,
+                        style: Theme.of(context).textTheme.headline),
+                    new Text(_speaker.company,
+                        style: Theme.of(context).textTheme.subhead),
+                    new Text(_speaker.country,
+                        style: Theme.of(context).textTheme.subhead),
+                    new Text(_speaker.bio,
+                        style: Theme.of(context).textTheme.body1),
+                  ],
+                ),
+              )
+            ],
+          ),
+        )
+      ],
     );
   }
 }
