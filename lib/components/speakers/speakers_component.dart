@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../config/application.dart';
 import 'domain/speakers_controller.dart';
 import 'domain/speakers_service.dart';
+import 'domain/data/speaker.dart';
 
 class SpeakersPage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _SpeakersPagePageState extends State<SpeakersPage> {
   @override
   void initState() {
     super.initState();
-    controller.getSpeakers().then((speakers) {
+    controller.getSpeakers().listen((speakers) {
       print("Component - getSpeakers()");
       setState(() {
         this.speakers = speakers;

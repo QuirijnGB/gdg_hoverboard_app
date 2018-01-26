@@ -3,6 +3,7 @@
 .idea
 .packages
 .pub/
+reports/
 build/
 ios/.generated/
 packages

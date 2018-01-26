@@ -1,22 +1,18 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
-import 'speakers_controller.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 abstract class SpeakersService {
-  Future<List<Speaker>> fetchSpeakers();
+  Observable<List<Map>> fetchSpeakers();
 }
 
 class FirebaseSpeakersService implements SpeakersService {
   final speakersRef = FirebaseDatabase.instance.reference().child('speakers');
 
   @override
-  Future<List<Speaker>> fetchSpeakers() async {
-    return await speakersRef.once().then((snapshot) {
-      List speakers = snapshot.value;
-      return speakers.where((map) => map != null).map((map) {
-        print("SpeakerController - map() - results $map");
-        return new Speaker(map);
-      }).toList();
-    });
+  Observable<List<Map>> fetchSpeakers() {
+    return new Observable(speakersRef.onValue
+        .map((event) => event.snapshot.value)
+        .where((map) => map != null));
   }
 }

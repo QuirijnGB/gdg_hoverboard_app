@@ -9,6 +9,7 @@ dependencies:
   firebase_database: 0.0.12
   firebase_storage: 0.0.5
   fluro: ^1.2.1
+  rxdart: ^0.15.0
 
 dev_dependencies:
   flutter_test:
