@@ -1,24 +1,26 @@
-import 'dart:async';
-import 'package:rxdart/rxdart.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:rxdart/rxdart.dart';
 
-abstract class SpeakersService {
-  Observable<List<Map>> fetchSpeakers();
-  Observable<Map> fetchSpeaker(int id);
+abstract class ScheduleService {
+  Observable<List<Map>> fetchSessions();
+
+  Observable<Map> fetchSchedule(int id);
 }
 
-class FirebaseSpeakersService implements SpeakersService {
-  final speakersRef = FirebaseDatabase.instance.reference().child('speakers');
+class FirebaseScheduleService implements ScheduleService {
+  final scheduleRef = FirebaseDatabase.instance.reference().child('schedule');
+  final sessionsRef = FirebaseDatabase.instance.reference().child('sessions');
 
   @override
-  Observable<List<Map>> fetchSpeakers() {
-    return new Observable(speakersRef.onValue
+  Observable<Map> fetchSchedule(int id) {
+    return new Observable(scheduleRef.onValue
         .map((event) => event.snapshot.value)
         .where((map) => map != null));
   }
+
   @override
-  Observable<Map> fetchSpeaker(int id) {
-    return new Observable(speakersRef.child("$id").onValue
+  Observable<List<Map>> fetchSessions() {
+    return new Observable(sessionsRef.onValue
         .map((event) => event.snapshot.value)
         .where((map) => map != null));
   }
