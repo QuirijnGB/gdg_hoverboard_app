@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../config/application.dart';
 import 'domain/data/schedule_day.dart';
 import 'domain/data/session.dart';
 import 'domain/data/time_slot.dart';
@@ -172,40 +173,49 @@ class SessionItem extends StatelessWidget {
 
   const SessionItem(this.session);
 
+  GestureTapCallback _goToSpeakerDetails(BuildContext context, int id) {
+    return () {
+      Application.router.navigateTo(context, "/sessions/$id");
+    };
+  }
+
   Widget build(BuildContext context) {
     return new Card(
-      child: new Container(
-        child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Expanded(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  session.image.isEmpty
-                      ? new Container()
-                      : new Image.network(session.image),
-                  new Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 16.0),
-                    child: new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        new Text(session.title,
-                            style: Theme.of(context).textTheme.subhead),
-                        new Text(
-                            session.complexity == null
-                                ? ""
-                                : session.complexity,
-                            style: Theme.of(context).textTheme.body1),
-                      ],
+      child: new InkWell(
+        onTap: _goToSpeakerDetails(context, session.id),
+        child: new Container(
+          child: new Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Expanded(
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    session.image.isEmpty
+                        ? new Container()
+                        : new Image.network(session.image),
+                    new Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 16.0),
+                      child: new Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          new Text(session.title,
+                              style: Theme.of(context).textTheme.subhead),
+                          new Text(
+                              session.complexity == null
+                                  ? ""
+                                  : session.complexity,
+                              style: Theme.of(context).textTheme.body1),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
