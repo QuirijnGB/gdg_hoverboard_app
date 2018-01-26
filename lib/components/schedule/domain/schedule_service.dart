@@ -4,7 +4,7 @@ import 'package:rxdart/rxdart.dart';
 abstract class ScheduleService {
   Observable<List<Map>> fetchSessions();
 
-  Observable<Map> fetchSchedule(int id);
+  Observable<List<Map>> fetchSchedule();
 }
 
 class FirebaseScheduleService implements ScheduleService {
@@ -12,7 +12,7 @@ class FirebaseScheduleService implements ScheduleService {
   final sessionsRef = FirebaseDatabase.instance.reference().child('sessions');
 
   @override
-  Observable<Map> fetchSchedule(int id) {
+  Observable<List<Map>> fetchSchedule() {
     return new Observable(scheduleRef.onValue
         .map((event) => event.snapshot.value)
         .where((map) => map != null));

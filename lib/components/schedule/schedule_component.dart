@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'domain/data/schedule_day.dart';
 import 'domain/data/session.dart';
 import 'domain/data/time_slot.dart';
+import 'domain/schedule_service.dart';
+import 'domain/schedule_controller.dart';
 
 class SchedulePage extends StatefulWidget {
   SchedulePage({Key key}) : super(key: key);
@@ -31,11 +33,11 @@ class MyInheritedWidget extends InheritedWidget {
 class _SchedulePageState extends State<SchedulePage>
     with SingleTickerProviderStateMixin {
   final reference = FirebaseDatabase.instance.reference().child('sessions');
-  final scheduleReference =
-      FirebaseDatabase.instance.reference().child('schedule');
+
+  final _controller = new ScheduleController(new FirebaseScheduleService());
 
   List<Tab> myTabs = <Tab>[const Tab(text: "")];
-  List _days = [];
+  List<ScheduleDay> _days = [];
   Map _sessions = {};
 
   @override
@@ -48,17 +50,18 @@ class _SchedulePageState extends State<SchedulePage>
   }
 
   void loadSchedule() {
-    scheduleReference.onValue.listen((event) {
-      _days = event.snapshot.value;
+    _controller.getSchedule().listen((schedule) {
+      this._days = schedule;
+
       setState(() {
         myTabs = _days.map((day) {
-          String date = day['dateReadable'];
+          String date = day.dateReadable;
           return new Tab(
             child: new Semantics(
               child: new Text(
                 date.toUpperCase(),
               ),
-              value: day['key'],
+              value: day.key,
             ),
           );
         }).toList();
@@ -68,10 +71,7 @@ class _SchedulePageState extends State<SchedulePage>
 
   void loadSessions() {
     reference.onValue.listen((event) {
-      setState(() {
-        this._sessions = event.snapshot.value;
-//        print(_sessions);
-      });
+      setState(() => this._sessions = event.snapshot.value);
     });
   }
 
@@ -79,8 +79,7 @@ class _SchedulePageState extends State<SchedulePage>
     List pages = [];
     if (_days.length > 0) {
       myTabs.forEach((Tab tab) {
-        var scheduleDay = new ScheduleDay(_days[myTabs.indexOf(tab)]);
-        pages.add(new DayScheduleWidget(scheduleDay));
+        pages.add(new DayScheduleWidget(_days[myTabs.indexOf(tab)]));
       });
     }
     return pages;
@@ -165,7 +164,6 @@ class TimeSlotWidget extends StatelessWidget {
   }
 
   Widget _createSessions(List<Session> sessions) {
-//    print(sessions);
     List sessionWidgets = [];
     sessions
         .forEach((sessionId) => sessionWidgets.add(new SessionItem(sessionId)));
