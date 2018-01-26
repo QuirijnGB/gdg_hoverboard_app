@@ -19,13 +19,13 @@ class ScheduleController {
 
   Observable<List<Session>> getSessions() {
     print("ScheduleController - getSessions()");
-    return _service.fetchSessions().map((list) {
-      print("ScheduleController - map() - results $list");
-      List<Session> lol = [];
-      list.forEach((k, v) {
-        lol.add(new Session(v));
+    return _service.fetchSessions().map((map) {
+      print("ScheduleController - map() - results $map");
+      List<Session> sessions = [];
+      map.forEach((k, v) {
+        sessions.add(new Session(v));
       });
-      return lol;
+      return sessions;
     });
   }
 }

@@ -9,12 +9,12 @@ class MockScheduleService extends Mock implements ScheduleService {}
 
 void main() {
   test('ScheduleController - getSchedule', () {
-    var mockSpeakersService = new MockScheduleService();
-    when(mockSpeakersService.fetchSchedule())
+    var mockScheduleService = new MockScheduleService();
+    when(mockScheduleService.fetchSchedule())
         .thenAnswer((_) => new Observable.fromIterable([
               [mockSchedule()]
             ]));
-    var controller = new ScheduleController(mockSpeakersService);
+    var controller = new ScheduleController(mockScheduleService);
 
     controller.getSchedule().listen((result) {
       expect(result.length, 1);
@@ -26,7 +26,26 @@ void main() {
       expect(result[0].timeSlots[0].sessionIds[0], [132]);
     });
 
-    verify(mockSpeakersService.fetchSchedule());
+    verify(mockScheduleService.fetchSchedule());
+  });
+
+  test('ScheduleController - getSession', () {
+    var mockScheduleService = new MockScheduleService();
+    when(mockScheduleService.fetchSessions())
+        .thenAnswer((_) => new Observable.fromIterable([
+              mockSession()
+            ]));
+    var controller = new ScheduleController(mockScheduleService);
+
+    controller.getSessions().listen((sessions) {
+      expect(sessions.length, 1);
+      expect(sessions[0].id, 101);
+      expect(sessions[0].title, "Windows and .NET on Google Cloud Platform");
+      expect(sessions[0].description, "In this session, we will take a look at Windows and .NET support on Google Cloud Platform. We will build a simple ASP.NET app, deploy to Google Compute Engine and take a look at some of the tools and APIs available to .NET developers on Google Cloud Platform.");
+      expect(sessions[0].complexity, "Beginner");
+    });
+
+    verify(mockScheduleService.fetchSessions());
   });
 }
 
@@ -146,5 +165,22 @@ Map mockSchedule() {
       {"title": "Conference hall"},
       {"title": "Workshops hall"}
     ]
+  };
+}
+
+Map mockSession() {
+  return {
+    "101": {
+      "complexity": "Beginner",
+      "description":
+          "In this session, we will take a look at Windows and .NET support on Google Cloud Platform. We will build a simple ASP.NET app, deploy to Google Compute Engine and take a look at some of the tools and APIs available to .NET developers on Google Cloud Platform.",
+      "id": 101,
+      "language": "English",
+      "presentation":
+          "https://speakerdeck.com/gdglviv/mete-atamel-windows-and-net-on-google-cloud-platform",
+      "speakers": [1],
+      "tags": ["Cloud"],
+      "title": "Windows and .NET on Google Cloud Platform"
+    }
   };
 }
