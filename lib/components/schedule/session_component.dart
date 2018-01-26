@@ -23,13 +23,17 @@ class _SessionPagePageState extends State<SessionPage> {
   void initState() {
     super.initState();
     _id = int.parse(widget.id);
-//    _controller.getSpeaker(_id).listen((speaker) {
-//      setState(() => this._session = speaker);
-//    });
+    _controller.getSession(_id).listen((speaker) {
+      setState(() => this._session = speaker);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Text("Hello session $_id");
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(_session.title),
+      ),
+    );
   }
 }

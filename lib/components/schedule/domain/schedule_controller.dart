@@ -28,4 +28,12 @@ class ScheduleController {
       return sessions;
     });
   }
+
+  Observable<Session> getSession(int id) {
+    print("ScheduleController - getSessions()");
+    return _service.fetchSession(id).map((map) {
+      print("ScheduleController - map() - results $map");
+      return new Session(map);
+    });
+  }
 }
