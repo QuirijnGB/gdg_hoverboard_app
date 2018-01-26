@@ -1,6 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+import 'domain/data/schedule_day.dart';
+import 'domain/data/session.dart';
+import 'domain/data/time_slot.dart';
+
 class SchedulePage extends StatefulWidget {
   SchedulePage({Key key}) : super(key: key);
 
@@ -73,7 +77,7 @@ class _SchedulePageState extends State<SchedulePage>
 
   List<Widget> createPages() {
     List pages = [];
-    if(_days.length > 0) {
+    if (_days.length > 0) {
       myTabs.forEach((Tab tab) {
         var scheduleDay = new ScheduleDay(_days[myTabs.indexOf(tab)]);
         pages.add(new DayScheduleWidget(scheduleDay));
@@ -104,103 +108,6 @@ class _SchedulePageState extends State<SchedulePage>
         ),
       ),
     );
-  }
-}
-
-class ScheduleDay {
-  String dateReadable;
-  String date;
-  List<TimeSlot> timeSlots;
-  List<Track> tracks;
-
-  ScheduleDay(Map map) {
-    dateReadable = map["dateReadable"];
-    date = map["date"];
-
-    timeSlots = TimeSlot.mapTimeSlots(map["timeslots"]);
-    tracks = Track.mapTracks(map["tracks"]);
-  }
-
-  @override
-  String toString() {
-    return 'ScheduleDay{dateReadable: $dateReadable, date: $date, timeSlots: $timeSlots, tracks: $tracks}';
-  }
-}
-
-class TimeSlot {
-  String startTime;
-  String endTime;
-  List sessionIds = [];
-
-  TimeSlot(Map map) {
-    startTime = map["startTime"];
-    endTime = map["endTime"];
-    sessionIds = map["sessions"];
-  }
-
-  @override
-  String toString() {
-    return 'TimeSlot{startTime: $startTime, endTime: $endTime}';
-  }
-
-  static List<TimeSlot> mapTimeSlots(List map) {
-    List<TimeSlot> timeslots = [];
-    if (map != null) {
-      map.forEach((v) {
-        timeslots.add(new TimeSlot(v));
-      });
-    }
-    return timeslots;
-  }
-}
-
-class Track {
-  String title;
-
-  Track(Map map) {
-    title = map["title"];
-  }
-
-  static List<Track> mapTracks(List map) {
-    List<Track> tracks = [];
-    if (map != null) {
-      map.forEach((v) {
-        tracks.add(new Track(v));
-      });
-    }
-    return tracks;
-  }
-
-  @override
-  String toString() {
-    return 'Track{title: $title}';
-  }
-}
-
-class Session {
-  String title, description, complexity;
-  int id;
-
-  Session(Map map) {
-    title = map["title"];
-    description = map["description"];
-    complexity = map["complexity"];
-    id = map["id"];
-  }
-
-  static List<Session> mapSessions(Map map) {
-    List<Session> sessions = [];
-    if (map != null) {
-      map.forEach((k, v) {
-        sessions.add(new Session(v));
-      });
-    }
-    return sessions;
-  }
-
-  @override
-  String toString() {
-    return 'Session{title: $title, description: $description, complexity: $complexity, id: $id}';
   }
 }
 

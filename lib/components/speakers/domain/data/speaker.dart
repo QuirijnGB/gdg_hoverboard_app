@@ -11,7 +11,6 @@ class Speaker {
     if (map == null) {
       throw new Exception("Nah mate");
     }
-    print("Create speaker $map");
     id = map["id"];
     name = map["name"];
     photoUrl = "https://hoverboard-demo.firebaseapp.com" + map["photoUrl"];
