@@ -1,11 +1,10 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'domain/data/schedule_day.dart';
 import 'domain/data/session.dart';
 import 'domain/data/time_slot.dart';
-import 'domain/schedule_service.dart';
 import 'domain/schedule_controller.dart';
+import 'domain/schedule_service.dart';
 
 class SchedulePage extends StatefulWidget {
   SchedulePage({Key key}) : super(key: key);
@@ -15,7 +14,7 @@ class SchedulePage extends StatefulWidget {
 }
 
 class MyInheritedWidget extends InheritedWidget {
-  final Map sessions;
+  final List<Session> sessions;
 
   const MyInheritedWidget({Key key, this.sessions, child})
       : super(key: key, child: child);
@@ -32,20 +31,17 @@ class MyInheritedWidget extends InheritedWidget {
 
 class _SchedulePageState extends State<SchedulePage>
     with SingleTickerProviderStateMixin {
-  final reference = FirebaseDatabase.instance.reference().child('sessions');
-
   final _controller = new ScheduleController(new FirebaseScheduleService());
 
   List<Tab> myTabs = <Tab>[const Tab(text: "")];
   List<ScheduleDay> _days = [];
-  Map _sessions = {};
+  List<Session> _sessions = [];
 
   @override
   void initState() {
     super.initState();
 
     loadSessions();
-
     loadSchedule();
   }
 
@@ -70,9 +66,9 @@ class _SchedulePageState extends State<SchedulePage>
   }
 
   void loadSessions() {
-    reference.onValue.listen((event) {
-      setState(() => this._sessions = event.snapshot.value);
-    });
+    _controller
+        .getSessions()
+        .listen((sessions) => setState(() => this._sessions = sessions));
   }
 
   List<Widget> createPages() {
@@ -135,7 +131,7 @@ class TimeSlotWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final myInheritedWidget = MyInheritedWidget.of(context);
     List<Session> sessions = [];
-    List<Session> mapTracks = Session.mapSessions(myInheritedWidget.sessions);
+    List<Session> mapTracks = myInheritedWidget.sessions;
     timeSlot.sessionIds.forEach((id) {
       mapTracks.forEach((e) {
         id.forEach((i) {

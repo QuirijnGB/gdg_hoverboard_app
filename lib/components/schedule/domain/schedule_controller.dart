@@ -13,9 +13,7 @@ class ScheduleController {
     print("ScheduleController - getSchedules()");
     return _service.fetchSchedule().map((List list) {
       print("ScheduleController - map() - results $list");
-      return list
-          .map((map) => new ScheduleDay(map))
-          .toList();
+      return list.map((map) => new ScheduleDay(map)).toList();
     });
   }
 
@@ -23,10 +21,11 @@ class ScheduleController {
     print("ScheduleController - getSessions()");
     return _service.fetchSessions().map((list) {
       print("ScheduleController - map() - results $list");
-      return list
-          .where((map) => map != null)
-          .map((map) => new Session(map))
-          .toList();
+      List<Session> lol = [];
+      list.forEach((k, v) {
+        lol.add(new Session(v));
+      });
+      return lol;
     });
   }
 }
