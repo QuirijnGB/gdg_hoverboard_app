@@ -71,7 +71,7 @@ class SpeakerItem extends StatelessWidget {
               child: new Hero(
                 tag: 'hero-' + speaker.name,
                 child: new Image.network(
-                  "https://hoverboard-demo.firebaseapp.com" + speaker.photoUrl,
+                  speaker.photoUrl,
                   fit: BoxFit.fill,
                   alignment: Alignment.center,
                 ),

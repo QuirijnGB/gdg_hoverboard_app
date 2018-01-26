@@ -1,6 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+import 'domain/data/speaker.dart';
+import 'domain/speakers_controller.dart';
+import 'domain/speakers_service.dart';
+
 class SpeakerPage extends StatefulWidget {
   SpeakerPage({Key key, this.id}) : super(key: key);
   final String id;
@@ -10,40 +14,19 @@ class SpeakerPage extends StatefulWidget {
 }
 
 class _SpeakerPagePageState extends State<SpeakerPage> {
-  String _id;
-  DataSnapshot snapshot;
-  String name = "";
-  String company = "";
-  String photoUrl;
-  String country = "";
-  String bio = "";
+  final SpeakerController _controller =
+      new SpeakerController(new FirebaseSpeakersService());
+
+  int _id;
+  Speaker _speaker;
 
   @override
   void initState() {
     super.initState();
-    _id = widget.id;
-
-    FirebaseDatabase.instance
-        .reference()
-        .child('speakers')
-        .child(_id)
-        .onValue
-        .listen(
-      (event) {
-        snapshot = event.snapshot;
-        if (snapshot.value != null) {
-          setState(() {
-            name = snapshot.value['name'];
-            photoUrl = "https://hoverboard-demo.firebaseapp.com" +
-                snapshot.value['photoUrl'];
-            company = snapshot.value['company'];
-            country = snapshot.value['country'];
-            bio = snapshot.value['bio'];
-            print(photoUrl);
-          });
-        }
-      },
-    );
+    _id = int.parse(widget.id);
+    _controller.getSpeaker(_id).listen((speaker) {
+      setState(() => this._speaker = speaker);
+    });
   }
 
   @override
@@ -59,9 +42,9 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
                 minWidth: double.INFINITY,
               ),
               child: new Hero(
-                tag: 'hero-' + name,
+                tag: 'hero-' + _speaker.name,
                 child: new Image.network(
-                  photoUrl,
+                  _speaker.photoUrl,
                   fit: BoxFit.fill,
                   alignment: Alignment.center,
                 ),
@@ -72,10 +55,14 @@ class _SpeakerPagePageState extends State<SpeakerPage> {
               child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  new Text(name, style: Theme.of(context).textTheme.headline),
-                  new Text(company, style: Theme.of(context).textTheme.subhead),
-                  new Text(country, style: Theme.of(context).textTheme.subhead),
-                  new Text(bio, style: Theme.of(context).textTheme.body1),
+                  new Text(_speaker.name,
+                      style: Theme.of(context).textTheme.headline),
+                  new Text(_speaker.company,
+                      style: Theme.of(context).textTheme.subhead),
+                  new Text(_speaker.country,
+                      style: Theme.of(context).textTheme.subhead),
+                  new Text(_speaker.bio,
+                      style: Theme.of(context).textTheme.body1),
                 ],
               ),
             )

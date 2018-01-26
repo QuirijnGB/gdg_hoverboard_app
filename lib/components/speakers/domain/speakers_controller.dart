@@ -18,4 +18,12 @@ class SpeakerController {
           .toList();
     });
   }
+
+  Observable<Speaker> getSpeaker(int id) {
+    print("SpeakerController - getSpeaker($id)");
+    return _service
+        .fetchSpeaker(id)
+        .where((map) => map != null)
+        .map((map) => new Speaker(map));
+  }
 }
