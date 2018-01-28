@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../speakers/domain/speakers_controller.dart';
+import '../speakers/domain/data/speaker.dart';
 import '../speakers/domain/speakers_service.dart';
 import 'domain/data/session.dart';
 import 'domain/schedule_controller.dart';
@@ -54,11 +55,11 @@ class _SessionPagePageState extends State<SessionPage> {
     });
   }
 
-  Widget displayLoading(){
+  Widget displayLoading() {
     return new CircularProgressIndicator();
   }
 
-  Widget displaySession(){
+  Widget displaySession() {
     return new CustomScrollView(
       slivers: [
         new SliverAppBar(
@@ -93,8 +94,7 @@ class _SessionPagePageState extends State<SessionPage> {
                         style: Theme.of(context).textTheme.subhead),
                     new Text(_session.description,
                         style: Theme.of(context).textTheme.subhead),
-                    new Text("${_session.speakers[0].name}",
-                        style: Theme.of(context).textTheme.subhead),
+                    new SpeakerSummary(_session.speakers[0]),
                   ],
                 ),
               ),
@@ -105,9 +105,40 @@ class _SessionPagePageState extends State<SessionPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return isLoading ? displayLoading() : displaySession();
+  }
+}
+
+class SpeakerSummary extends StatelessWidget {
+  final Speaker speaker;
+
+  const SpeakerSummary(this.speaker);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      padding: new EdgeInsets.only(top: 16.0, bottom: 16.0),
+      child: new Row(
+        children: <Widget>[
+          new CircleAvatar(
+            backgroundImage: new NetworkImage(speaker.photoUrl),
+          ),
+          new Container(
+            padding: new EdgeInsets.only(left: 8.0),
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text("${speaker.name}",
+                    style: Theme.of(context).textTheme.subhead),
+                new Text("${speaker.company}, ${speaker.country}",
+                    style: Theme.of(context).textTheme.subhead),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
