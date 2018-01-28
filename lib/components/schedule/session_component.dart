@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 
-import '../speakers/domain/speakers_controller.dart';
 import '../speakers/domain/data/speaker.dart';
+import '../speakers/domain/speakers_controller.dart';
 import '../speakers/domain/speakers_service.dart';
 import 'domain/data/session.dart';
 import 'domain/schedule_controller.dart';
@@ -23,7 +22,8 @@ class _SessionPagePageState extends State<SessionPage> {
       new SpeakerController(new FirebaseSpeakersService());
 
   int _id;
-  Session _session;
+  Session _session = new Session({});
+  List<Speaker> _speakers = [];
   bool isLoading = true;
 
   @override
@@ -36,27 +36,36 @@ class _SessionPagePageState extends State<SessionPage> {
 
   void loadSession() {
     isLoading = true;
-    _controller.getSession(_id).flatMap((session) {
-      if (session.speakerIds == null || session.speakerIds.length < 1) {
-        return new Observable.just(session);
-      }
-      return _speakersController
-          .getSpeaker(session.speakerIds[0])
-          .map((speaker) {
-        session.speakers.add(speaker);
-        return session;
-      });
-    }).listen((session) {
+    _controller.getSession(_id).listen((session) {
       setState(() {
         isLoading = false;
         this._session = session;
-        print("setState $session");
+        loadSpeakers();
       });
     });
   }
 
+  void loadSpeakers() {
+    _speakersController
+        .getSpeakersById(this._session.speakerIds)
+        .listen((speakers) {
+      setState(() => _speakers = speakers);
+    });
+  }
+
   Widget displayLoading() {
-    return new CircularProgressIndicator();
+    return new Center(
+      child: new CircularProgressIndicator(),
+    );
+  }
+
+  Widget displaySpeakers(List<Speaker> speakers) {
+    if (speakers == null || speakers.length < 1) {
+      return new Container();
+    }
+    return new Column(
+      children: speakers.map((speaker) => new SpeakerSummary(speaker)).toList(),
+    );
   }
 
   Widget displaySession() {
@@ -94,7 +103,7 @@ class _SessionPagePageState extends State<SessionPage> {
                         style: Theme.of(context).textTheme.subhead),
                     new Text(_session.description,
                         style: Theme.of(context).textTheme.subhead),
-                    new SpeakerSummary(_session.speakers[0]),
+                    displaySpeakers(_speakers),
                   ],
                 ),
               ),
