@@ -179,44 +179,58 @@ class SessionItem extends StatelessWidget {
     };
   }
 
+  Widget createContent(BuildContext context) {
+    return new Container(
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Expanded(
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                session.image.isEmpty
+                    ? new Container()
+                    : new Image.network(session.image),
+                new Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 16.0),
+                  child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Text(session.title,
+                          style: Theme.of(context).textTheme.subhead),
+                      new Text(
+                          session.complexity == null ? "" : session.complexity,
+                          style: Theme.of(context).textTheme.body1),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _hasDetails(Session session) {
+    //TODO this could be better
+
+    if (session.complexity == null) {
+      return false;
+    }
+
+    return true;
+  }
+
   Widget build(BuildContext context) {
     return new Card(
       child: new InkWell(
-        onTap: _goToSpeakerDetails(context, session.id),
-        child: new Container(
-          child: new Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              new Expanded(
-                child: new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    session.image.isEmpty
-                        ? new Container()
-                        : new Image.network(session.image),
-                    new Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 16.0),
-                      child: new Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Text(session.title,
-                              style: Theme.of(context).textTheme.subhead),
-                          new Text(
-                              session.complexity == null
-                                  ? ""
-                                  : session.complexity,
-                              style: Theme.of(context).textTheme.body1),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        onTap: _hasDetails(session)
+            ? _goToSpeakerDetails(context, session.id)
+            : null,
+        child: createContent(context),
       ),
     );
   }
