@@ -4,10 +4,8 @@ description: An app tot support the GDG Hoverboard website.
 dependencies:
   flutter:
     sdk: flutter
-  firebase_analytics: 0.0.4
-  firebase_auth: 0.2.0
-  firebase_database: 0.0.12
-  firebase_storage: 0.0.5
+  firebase_analytics: 0.2.2
+  firebase_database: 0.3.4
   fluro: ^1.2.1
   rxdart: ^0.15.0
 
