@@ -198,11 +198,15 @@ class SessionItem extends StatelessWidget {
                   child: new Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      new Text(session.title,
-                          style: Theme.of(context).textTheme.subhead),
+                      new Container(
+                        padding: new EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        child: new Text(session.title,
+                            style: Theme.of(context).textTheme.subhead),
+                      ),
                       new Text(
                           session.complexity == null ? "" : session.complexity,
                           style: Theme.of(context).textTheme.body1),
+                      displayTags(context, session.tags),
                     ],
                   ),
                 ),
@@ -210,6 +214,21 @@ class SessionItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget displayTags(BuildContext context, List<String> tags) {
+    if (tags == null || tags.length < 1) {
+      return new Container();
+    }
+    return new Container(
+      padding: new EdgeInsets.only(top: 4.0, bottom: 8.0),
+      child: new Row(
+        children: tags
+            .map((tag) =>
+                new Text(tag, style: Theme.of(context).textTheme.caption))
+            .toList(),
       ),
     );
   }
