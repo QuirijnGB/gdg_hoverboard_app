@@ -68,6 +68,21 @@ class _SessionPagePageState extends State<SessionPage> {
     );
   }
 
+  Widget displayTags(List<String> tags) {
+    if (tags == null || tags.length < 1) {
+      return new Container();
+    }
+    return new Container(
+      padding: new EdgeInsets.only(top: 8.0, bottom: 8.0),
+      child: new Row(
+        children: tags
+            .map((tag) =>
+                new Text(tag, style: Theme.of(context).textTheme.caption))
+            .toList(),
+      ),
+    );
+  }
+
   Widget displaySession() {
     return new CustomScrollView(
       slivers: [
@@ -99,10 +114,14 @@ class _SessionPagePageState extends State<SessionPage> {
                   children: <Widget>[
                     new Text(_session.title,
                         style: Theme.of(context).textTheme.headline),
-                    new Text(_session.complexity,
+                    new Text("${_session.language} | ${_session.complexity}",
                         style: Theme.of(context).textTheme.subhead),
-                    new Text(_session.description,
-                        style: Theme.of(context).textTheme.subhead),
+                    displayTags(_session.tags),
+                    new Container(
+                      padding: new EdgeInsets.only(top: 8.0),
+                      child: new Text(_session.description,
+                          style: Theme.of(context).textTheme.subhead),
+                    ),
                     displaySpeakers(_speakers),
                   ],
                 ),

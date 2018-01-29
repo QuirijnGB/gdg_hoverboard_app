@@ -1,16 +1,18 @@
-import '../../../speakers/domain/data/speaker.dart';
+
 
 class Session {
-  String title, description, complexity, image;
+  String title, description, complexity, language, image;
   int id;
   List<int> speakerIds;
-  List<Speaker> speakers = [];
+  List<String> tags = [];
 
   Session(Map map) {
     title = map["title"];
     description = map["description"];
     complexity = map["complexity"];
+    language = map["language"];
     speakerIds = map["speakers"];
+    tags = map["tags"];
     id = map["id"];
     image = map["image"] != null
         ? "https://hoverboard-demo.firebaseapp.com${map["image"]}"
