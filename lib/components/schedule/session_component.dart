@@ -84,52 +84,55 @@ class _SessionPagePageState extends State<SessionPage> {
   }
 
   Widget displaySession() {
-    return new CustomScrollView(
-      slivers: [
-        new SliverAppBar(
-          flexibleSpace: new FlexibleSpaceBar(
-            background: new Hero(
-              tag: 'hero-${_session.id}',
-              child: new Image.network(
-                _session.image,
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.center,
-              ),
-            ),
-          ),
-          pinned: true,
-          // Extruding edge from the sliver appbar, may need to fix expanded height
-          expandedHeight: _session.image.isEmpty
-              ? null
-              : MediaQuery.of(context).size.height / 2.5,
-        ),
-        new SliverFillRemaining(
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              new Container(
-                padding: new EdgeInsets.all(16.0),
-                child: new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    new Text(_session.title,
-                        style: Theme.of(context).textTheme.headline),
-                    new Text("${_session.language} | ${_session.complexity}",
-                        style: Theme.of(context).textTheme.subhead),
-                    displayTags(_session.tags),
-                    new Container(
-                      padding: new EdgeInsets.only(top: 8.0),
-                      child: new Text(_session.description,
-                          style: Theme.of(context).textTheme.subhead),
-                    ),
-                    displaySpeakers(_speakers),
-                  ],
+    return new Container(
+      color: Colors.white,
+      child: new CustomScrollView(
+        slivers: [
+          new SliverAppBar(
+            flexibleSpace: new FlexibleSpaceBar(
+              background: new Hero(
+                tag: 'hero-${_session.id}',
+                child: new Image.network(
+                  _session.image,
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.center,
                 ),
               ),
-            ],
+            ),
+            pinned: true,
+            // Extruding edge from the sliver appbar, may need to fix expanded height
+            expandedHeight: _session.image.isEmpty
+                ? null
+                : MediaQuery.of(context).size.height / 2.5,
           ),
-        ),
-      ],
+          new SliverFillRemaining(
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Container(
+                  padding: new EdgeInsets.all(16.0),
+                  child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Text(_session.title,
+                          style: Theme.of(context).textTheme.headline),
+                      new Text("${_session.language} | ${_session.complexity}",
+                          style: Theme.of(context).textTheme.subhead),
+                      displayTags(_session.tags),
+                      new Container(
+                        padding: new EdgeInsets.only(top: 8.0),
+                        child: new Text(_session.description,
+                            style: Theme.of(context).textTheme.subhead),
+                      ),
+                      displaySpeakers(_speakers),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
